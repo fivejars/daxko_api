@@ -1,0 +1,7 @@
+daxko_api.settings:
+  path: admin/config/services/daxko
+  defaults:
+    _form: '\Drupal\daxko_api\Form\SettingsForm'
+    _title: 'Daxko API settings'
+  requirements:
+    _permission: 'administer site configuration'

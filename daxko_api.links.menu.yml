@@ -1,0 +1,6 @@
+daxko_api.settings:
+  title: 'Daxko API settings'
+  parent: system.admin_config_services
+  route_name: daxko_api.settings
+  weight: 0
+  description: 'Configure Daxko API credentials.'

@@ -1,0 +1,17 @@
+services:
+  logger.channel.daxko_api:
+    parent: logger.channel_base
+    arguments:
+      - 'daxko_api'
+  daxko_api.daxko_client:
+    class: Drupal\daxko_api\DaxkoClient
+    arguments: ['@config.factory', '@http_client_factory', '@cache.default', '@logger.channel.daxko_api']
+  daxko_api.membership:
+    class: Drupal\daxko_api\Membership
+    arguments: ['@daxko_api.daxko_client']
+  daxko_api.program:
+    class: Drupal\daxko_api\Program
+    arguments: ['@daxko_api.daxko_client']
+  daxko_api.branch:
+    class: Drupal\daxko_api\Branch
+    arguments: ['@daxko_api.daxko_client']
