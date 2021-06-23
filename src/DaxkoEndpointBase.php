@@ -15,7 +15,7 @@ class DaxkoEndpointBase {
   protected $client;
 
   /**
-   * Membership constructor.
+   * DaxkoEndpointBase constructor.
    *
    * @param \Drupal\daxko_api\DaxkoClient $client
    *   The Daxko API client.

@@ -5,23 +5,12 @@ namespace Drupal\daxko_api;
 /**
  * Wraps program related requests.
  */
-class Program extends DaxkoEndpointBase {
+class Program extends DaxkoEndpointBase implements DaxkoApiProgramInterface {
 
   /**
-   * Loads categories.
-   *
-   * @param array $location_ids
-   *   Restricts the list to be associated with the specified locations.
-   *   If omitted, no location-based restrictions will be applied.
-   * @param int $limit
-   *   (Optional) Number of results to return.
-   * @param array $params
-   *   (Optional) The array of additional query params.
-   *
-   * @return array|mixed
-   *   The array of program categories.
+   * {@inheritdoc}
    */
-  public function getCategories(array $location_ids = [], $limit = 100, array $params = []) {
+  public function getCategories(array $location_ids = [], $limit = 100, array $params = []): array {
     $query = [
       'limit' => $limit,
       'location_ids' => implode(',', $location_ids),
@@ -36,29 +25,9 @@ class Program extends DaxkoEndpointBase {
   }
 
   /**
-   * Returns offerings for the different program types as a common format.
-   *
-   * Accepts a number of search parameters.
-   *
-   * @param array $category_ids
-   *   Restricts the results to the list of categories.
-   * @param array $location_ids
-   *   Restricts the results to the of list of locations.
-   * @param array $filters
-   *   The array of additional filters.
-   * @param int $limit
-   *   Number of offering results to return (max of 100).
-   * @param string $sort
-   *   Determines how the offering results will be sorted.
-   *   Example: +name,-score
-   *   Valid values: name, score, start_date.
-   *
-   * @return array
-   *   Search results.
-   *
-   * @see https://api.daxko.com/v3/docs/api/index.html#searchProgramOfferings
+   * {@inheritdoc}
    */
-  public function search(array $category_ids = [], array $location_ids = [], array $filters = [], $limit = 100, $sort = '-score') {
+  public function search(array $category_ids = [], array $location_ids = [], array $filters = [], $limit = 100, $sort = '-score'): array {
     $query = [
       'limit' => $limit,
       'location_ids' => implode(',', $location_ids),
