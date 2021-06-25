@@ -109,8 +109,7 @@ class DaxkoClient implements DaxkoClientInterface {
       return $token->data;
     }
 
-    $token = $this->refreshToken();
-    return $token;
+    return $this->refreshToken();
   }
 
   /**
@@ -160,7 +159,7 @@ class DaxkoClient implements DaxkoClientInterface {
   /**
    * {@inheritdoc}
    */
-  public function request($method, $uri = '', array $options = []) {
+  public function request($method, $uri = '', array $options = []): array {
     $data = [];
     try {
       $access_token = $this->getAccessToken();
