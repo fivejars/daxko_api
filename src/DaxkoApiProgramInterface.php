@@ -74,4 +74,36 @@ interface DaxkoApiProgramInterface {
    */
   public function getProgramLocations(array $category_ids = [], int $limit = 100, array $params = []) : array;
 
+  /**
+   * Returns offerings that are available for registration for the different program types.
+   *
+   * @param string $program_id
+   *   Daxko program ID.
+   * @param array $offering_ids
+   *   (Optional) The list of offering ids to filter by..
+   * @param array $filters
+   *   - category_ids: List of category ids to filter by.
+   *   - location_ids: List of location ids to filter by.
+   *   - registration_type: Filters results that are currently open for registration.
+   *     Valid values: online, in_house
+   *
+   * @see https://api.daxko.com/v3/docs/api/index.html#listProgramOfferings
+   */
+  public function getOfferingList(string $program_id, array $offering_ids = [], array $filters = []) : array;
+
+  /**
+   * Returns offerings for the program.
+   *
+   * @param string $program_id
+   *   Daxko Program ID.
+   * @param string $offering_id
+   *   Daxko Offering ID.
+   * @param string $location_id
+   *   (optional) Daxko Location ID.
+   *
+   * @return array
+   *   Offering details.
+   */
+  public function getOfferingDetails(string $program_id, string $offering_id, string $location_id): array;
+
 }
