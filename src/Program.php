@@ -59,4 +59,34 @@ class Program extends DaxkoEndpointBase implements DaxkoApiProgramInterface {
     return $this->client->request('GET', '/v3/programs/locations', ['query' => $query]);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getOfferingList(string $program_id, array $offering_ids = [], array $filters = []): array {
+    $query = [];
+
+    if ($offering_ids) {
+      $query['offering_ids'] = implode(',', $offering_ids);
+    }
+
+    if (!empty($params)) {
+      $query = array_merge($query, $params);
+    }
+
+    return $this->client->request('GET', '/v3/programs/' . $program_id . '/offerings', ['query' => $query]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOfferingDetails(string $program_id, string $offering_id, string $location_id): array {
+    $query = [];
+
+    if ($location_id) {
+      $query['location_id'] = $location_id;
+    }
+
+    return $this->client->request('GET', '/v3/programs/' . $program_id . '/offerings/' . $offering_id, ['query' => $query]);
+  }
+
 }
