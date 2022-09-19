@@ -53,14 +53,29 @@ class Membership extends DaxkoEndpointBase implements DaxkoApiMembershipInterfac
   /**
    * {@inheritdoc}
    */
-  public function join($type_id, $registration_type = 'online') {
+  public function join($type_id, $registration_type = NULL): array {
     $form_params = [
       'membership_type_id' => $type_id,
-      'registration_type' => $registration_type,
     ];
+    if ($registration_type) {
+      $form_params['registration_type'] = $registration_type;
+    }
     $options = ['form_params' => $form_params];
 
     return $this->client->request('POST', '/v3/membership/join', $options);
+  }
+
+  /**
+   * This call is used to retrieve the information needed to review the cart.
+   *
+   * @param string $cart_id
+   *   The Daxko Membership cart ID.
+   *
+   * @return array
+   *   The Membership information.
+   */
+  public function review(string $cart_id): array {
+    return $this->client->request('GET', '/v3/membership/' . $cart_id);
   }
 
   /**
