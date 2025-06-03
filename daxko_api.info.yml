@@ -1,4 +1,4 @@
 name: Daxko API
 type: module
 description: 'Provides interfaces for integration with Daxko API.'
-core_version_requirement: ^9 || ^10
+core_version_requirement: ^10 || ^11

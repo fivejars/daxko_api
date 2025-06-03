@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\daxko_api;
 
 /**
- * Branch related endpoints.
+ * Provides methods for retrieving branch information from the Daxko API.
  */
 class Branch extends DaxkoEndpointBase {
 
@@ -13,8 +15,8 @@ class Branch extends DaxkoEndpointBase {
    * @return array
    *   The list of loaded branches.
    */
-  public function loadAll() {
-    $response = $this->client->request('GET', '/v3/branches');
+  public function loadAll(): array {
+    $response = $this->client->request('GET', '/api/v1/branches');
     return $response['branches'] ?? [];
   }
 
@@ -26,9 +28,15 @@ class Branch extends DaxkoEndpointBase {
    *
    * @return array
    *   The branch info.
+   *
+   * @throws \InvalidArgumentException
    */
-  public function load($id) {
-    return $this->client->request('GET', '/v3/branches/' . $id);
+  public function load(string $id): array {
+    if (empty($id)) {
+      throw new \InvalidArgumentException('Branch ID is required.');
+    }
+
+    return $this->client->request('GET', '/api/v1/branches/' . $id);
   }
 
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\daxko_api;
 
 /**
@@ -21,7 +23,7 @@ class Program extends DaxkoEndpointBase implements DaxkoApiProgramInterface {
     }
 
     $query = array_filter($query);
-    return $this->client->request('GET', '/v3/programs/categories', ['query' => $query]);
+    return $this->client->request('GET', '/api/v1/programs/categories', ['query' => $query]);
   }
 
   /**
@@ -40,7 +42,7 @@ class Program extends DaxkoEndpointBase implements DaxkoApiProgramInterface {
     }
 
     $query = array_filter($query);
-    return $this->client->request('GET', '/v3/programs/offerings/search', ['query' => $query]);
+    return $this->client->request('GET', '/api/v1/programs/offerings/search', ['query' => $query]);
   }
 
   /**
@@ -56,7 +58,7 @@ class Program extends DaxkoEndpointBase implements DaxkoApiProgramInterface {
       $query = array_merge($query, $params);
     }
 
-    return $this->client->request('GET', '/v3/programs/locations', ['query' => $query]);
+    return $this->client->request('GET', '/api/v1/programs/locations', ['query' => $query]);
   }
 
   /**
@@ -73,7 +75,7 @@ class Program extends DaxkoEndpointBase implements DaxkoApiProgramInterface {
       $query = array_merge($query, $params);
     }
 
-    return $this->client->request('GET', '/v3/programs/' . $program_id . '/offerings', ['query' => $query]);
+    return $this->client->request('GET', '/api/v1/programs/' . $program_id . '/offerings', ['query' => $query]);
   }
 
   /**
@@ -86,7 +88,7 @@ class Program extends DaxkoEndpointBase implements DaxkoApiProgramInterface {
       $query['location_id'] = $location_id;
     }
 
-    return $this->client->request('GET', '/v3/programs/' . $program_id . '/offerings/' . $offering_id, ['query' => $query]);
+    return $this->client->request('GET', '/api/v1/programs/' . $program_id . '/offerings/' . $offering_id, ['query' => $query]);
   }
 
 }

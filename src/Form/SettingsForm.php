@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\daxko_api\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
@@ -13,47 +15,44 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritDoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['daxko_api.settings'];
   }
 
   /**
    * {@inheritDoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'daxko_api_settings';
   }
 
   /**
    * {@inheritDoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('daxko_api.settings');
 
     $form['client_id'] = [
-      '#type' => 'number',
+      '#type' => 'textfield',
       '#title' => $this->t('Client ID'),
       '#default_value' => $config->get('client_id'),
       '#required' => TRUE,
     ];
-    $form['username'] = [
+
+    $form['client_secret'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Username'),
-      '#default_value' => $config->get('username'),
+      '#title' => $this->t('Client Secret'),
+      '#default_value' => $config->get('client_secret'),
       '#required' => TRUE,
     ];
-    $form['password'] = [
+
+    $form['scope'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Password'),
-      '#default_value' => $config->get('password'),
+      '#title' => $this->t('Scope'),
+      '#default_value' => $config->get('scope'),
       '#required' => TRUE,
     ];
-    $form['refresh_token'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('Refresh token'),
-      '#default_value' => $config->get('refresh_token'),
-      '#required' => TRUE,
-    ];
+
     $form['delay'] = [
       '#type' => 'select',
       '#title' => $this->t('Delay'),
@@ -75,13 +74,12 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $values = $form_state->getValues();
     $this->config('daxko_api.settings')
       ->set('client_id', $values['client_id'])
-      ->set('username', $values['username'])
-      ->set('password', $values['password'])
-      ->set('refresh_token', $values['refresh_token'])
+      ->set('client_secret', $values['client_secret'])
+      ->set('scope', $values['scope'])
       ->set('delay', $values['delay'])
       ->save();
 
