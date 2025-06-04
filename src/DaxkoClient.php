@@ -1,68 +1,57 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\daxko_api;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Http\ClientFactory;
+use Drupal\Core\Logger\LoggerChannel;
 use Drupal\Core\Logger\LoggerChannelInterface;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
 /**
- * Daxko APIv3 client.
+ * Daxko Partners API client.
  */
 class DaxkoClient implements DaxkoClientInterface {
 
-  const API_BASE_URL = 'https://api.daxko.com';
+  const API_BASE_URL = 'https://api.partners.daxko.com/';
 
   const TOKEN_GRANT_TYPE = 'client_credentials';
 
-  const GRANT_TYPE = 'password';
-
-  const SCOPE = 'member:auto_login';
-
   /**
-   * The config.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   * The config factory.
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The HTTP client factory.
-   *
-   * @var \Drupal\Core\Http\ClientFactory
    */
-  protected $httpClientFactory;
+  protected ClientFactory $httpClientFactory;
 
   /**
    * The cache backend.
-   *
-   * @var \Drupal\Core\Cache\CacheBackendInterface
    */
-  protected $cache;
+  protected CacheBackendInterface $cache;
 
   /**
    * Logger channel.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannel
    */
-  protected $logger;
+  protected LoggerChannelInterface|LoggerChannel $logger;
 
   /**
    * Daxko configuration.
-   *
-   * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $config;
+  protected ImmutableConfig $config;
 
   /**
    * Daxko HTTP client.
-   *
-   * @var \GuzzleHttp\Client
    */
-  protected $client;
+  protected Client $client;
 
   /**
    * Authentication constructor.
@@ -98,50 +87,48 @@ class DaxkoClient implements DaxkoClientInterface {
   }
 
   /**
-   * Get Daxko OAuth access token.
+   * Retrieves the Daxko OAuth access token.
    *
    * @return string|null
-   *   The Access token.
+   *   The access token, or NULL on failure.
    */
-  protected function getAccessToken() {
-    $token = $this->cache->get('daxko.access_token');
-    if ($token) {
-      return $token->data;
+  protected function getAccessToken(): ?string {
+    $cache_key = 'daxko.access_token';
+    $cached = $this->cache->get($cache_key);
+    if ($cached) {
+      return $cached->data;
     }
 
     return $this->refreshToken();
   }
 
   /**
-   * Refreshes Daxko OAuth access token.
+   * Refreshes the Daxko OAuth access token.
    *
    * @return string|null
-   *   Access token or null.
+   *   The new access token, or NULL on failure.
    */
-  protected function refreshToken() {
+  protected function refreshToken(): ?string {
     $access_token = NULL;
 
     try {
-      // According to the Daxko API V3 docs we should username as client_id.
-      // And send client_id in the scope param.
       $form_params = [
-        'client_id' => $this->config->get('username'),
-        'client_secret' => $this->config->get('password'),
+        'client_id' => $this->config->get('client_id'),
+        'client_secret' => $this->config->get('client_secret'),
+        'scope' => $this->config->get('scope'),
         'grant_type' => static::TOKEN_GRANT_TYPE,
-        'scope' => 'client:' . $this->config->get('client_id'),
       ];
 
-      $headers = [
-        'Authorization' => "Bearer " . $this->config->get('refresh_token'),
+      $options = [
+        'headers' => ['Content-Type' => 'application/json'],
+        'json' => $form_params,
       ];
 
-      $options = ['form_params' => $form_params, 'headers' => $headers];
-      $response = $this->client->request('POST', '/v3/partners/oauth2/token', $options);
+      $response = $this->client->request('POST', '/auth/token', $options);
+      $data = Json::decode((string) $response->getBody());
 
-      $body = $response->getBody();
-      $data = Json::decode((string) $body);
-      if (isset($data['access_token']) && isset($data['expires_in'])) {
-        $expire = time() + $data['expires_in'];
+      if (!empty($data['access_token']) && !empty($data['expires_in'])) {
+        $expire = time() + (int) $data['expires_in'];
         $this->cache->set('daxko.access_token', $data['access_token'], $expire);
         $this->logger->info('The new access token has been granted.');
 
@@ -149,8 +136,7 @@ class DaxkoClient implements DaxkoClientInterface {
       }
     }
     catch (GuzzleException $e) {
-      $message = 'Unable to get Daxko Access token with the message %message';
-      $this->logger->error($message, ['%message' => $e->getMessage()]);
+      $this->logger->error('Unable to get Daxko access token: @message', ['@message' => $e->getMessage()]);
     }
 
     return $access_token;
@@ -161,41 +147,32 @@ class DaxkoClient implements DaxkoClientInterface {
    */
   public function request($method, $uri = '', array $options = []): array {
     $data = [];
+
     try {
       $access_token = $this->getAccessToken();
-
       if (!$access_token) {
         return $data;
       }
 
       $default_headers = [
-        'Authorization' => "Bearer " . $access_token,
-        'username' => $this->config->get('user'),
-        'password' => $this->config->get('pass'),
-        'grant_type' => static::GRANT_TYPE,
-        'scope' => static::SCOPE,
+        'Authorization' => "Bearer {$access_token}",
+        'Accept' => 'application/json',
       ];
 
-      if (isset($options['headers'])) {
-        $options['headers'] = array_merge($default_headers, $options['headers']);
-      }
-      else {
-        $options['headers'] = $default_headers;
-      }
+      $options['headers'] = array_merge(
+        $default_headers,
+        $options['headers'] ?? []
+      );
 
       $response = $this->client->request($method, $uri, $options);
-
-      $body = (string) $response->getBody();
-      $data = (array) Json::decode($body);
+      $data = Json::decode((string) $response->getBody());
     }
     catch (GuzzleException $e) {
-      $message = 'Failed to call Daxko API method %method %uri with the message %message';
-      $params = [
-        '%method' => $method,
-        '%message' => $e->getMessage(),
-        '%uri' => $uri,
-      ];
-      $this->logger->error($message, $params);
+      $this->logger->error('Failed to call Daxko API method @method @uri: @message', [
+        '@method' => $method,
+        '@uri' => $uri,
+        '@message' => $e->getMessage(),
+      ]);
     }
 
     return $data;

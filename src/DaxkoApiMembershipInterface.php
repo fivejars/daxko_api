@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\daxko_api;
 
 /**
@@ -21,7 +23,7 @@ interface DaxkoApiMembershipInterface {
    * @return array
    *   The array of membership types.
    */
-  public function getTypes($branch_id, $discount_group_ids = FALSE, $registration_type = 'online');
+  public function getTypes(string $branch_id, bool $discount_group_ids = FALSE, string $registration_type = 'online'): array;
 
   /**
    * Returns a list of branches that can handle membership join.
@@ -36,13 +38,13 @@ interface DaxkoApiMembershipInterface {
    * @return array
    *   The list of branches that allow members to join via the API.
    */
-  public function getBranches($registration_type = 'online', $renew = FALSE);
+  public function getBranches(string $registration_type = 'online', bool $renew = FALSE): array;
 
   /**
    * Starts the join process for a given membership type id.
    *
    * The returned cart_id will be required on subsequent membership calls.
-   *  NOTE: This cart_id is only valid for membership API calls.
+   * NOTE: This cart_id is only valid for membership API calls.
    *
    * @param string $type_id
    *   Membership type id to start join process with.
@@ -56,13 +58,13 @@ interface DaxkoApiMembershipInterface {
    *
    *   Example:
    *   @code
-   *   array(
+   *   [
    *     'cart_id' => 'db2c4395-888c-42ce-9056-08e2f8a5f2d0',
-   *     'links' => array('rel' => 'review', 'href' => '/v3/membership/db2c4395-888c-42ce-9056-08e2f8a5f2d0'),
-   *   );
+   *     'links' => ['rel' => 'review', 'href' => '/api/v1/membership/db2c4395-888c-42ce-9056-08e2f8a5f2d0'],
+   *   ]
    *   @endcode
    */
-  public function join($type_id, $registration_type = 'online');
+  public function join(string $type_id, string $registration_type = 'online'): array;
 
   /**
    * Starts the renewal process for a given 'membership_type_id' and 'unit_id'.
@@ -82,12 +84,13 @@ interface DaxkoApiMembershipInterface {
    *
    *   Example:
    *   @code
-   *   array(
+   *   [
    *     'cart_id' => 'db2c4395-888c-42ce-9056-08e2f8a5f2d0',
-   *     'links' => array('rel' => 'review', 'href' => '/v3/membership/db2c4395-888c-42ce-9056-08e2f8a5f2d0'),
-   *   );
+   *     'links' => ['rel' => 'review', 'href' =>
+   * '/api/v1/membership/db2c4395-888c-42ce-9056-08e2f8a5f2d0'],
+   *   ];
    *   @endcode
    */
-  public function renew($type_id, $unit_id, $registration_type = 'online');
+  public function renew(string $type_id, string $unit_id, string $registration_type = 'online'): array;
 
 }

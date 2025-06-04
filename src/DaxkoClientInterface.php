@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\daxko_api;
 
 /**
@@ -20,6 +22,6 @@ interface DaxkoClientInterface {
    * @return array
    *   The array with API response.
    */
-  public function request($method, $uri = '', array $options = []);
+  public function request(string $method, string $uri = '', array $options = []): array;
 
 }

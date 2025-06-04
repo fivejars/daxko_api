@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\daxko_api;
 
 /**
@@ -9,10 +11,8 @@ class DaxkoEndpointBase {
 
   /**
    * The Daxko API client.
-   *
-   * @var \Drupal\daxko_api\DaxkoClient
    */
-  protected $client;
+  protected DaxkoClient $client;
 
   /**
    * DaxkoEndpointBase constructor.

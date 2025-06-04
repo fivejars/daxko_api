@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\daxko_api;
 
 /**
@@ -44,7 +46,7 @@ interface DaxkoApiProgramInterface {
    * @return array
    *   Search results.
    *
-   * @see https://api.daxko.com/v3/docs/api/index.html#searchProgramOfferings
+   * @see https://api.daxko.com/api/v1/docs/api/index.html#searchProgramOfferings
    */
   public function search(array $category_ids = [], array $location_ids = [], array $filters = [], int $limit = 100, string $sort = '-score'): array;
 
@@ -70,7 +72,7 @@ interface DaxkoApiProgramInterface {
    *   - include_inactive_locations: Indicates whether to show inactive locations.
    *   - date_ranges: Restricts results that occur within at least one of the date ranges.
    *
-   * @see https://api.daxko.com/v3/docs/api/index.html#list-program-locations
+   * @see https://api.daxko.com/api/v1/docs/api/index.html#list-program-locations
    */
   public function getProgramLocations(array $category_ids = [], int $limit = 100, array $params = []) : array;
 
@@ -87,7 +89,7 @@ interface DaxkoApiProgramInterface {
    *   - registration_type: Filters results that are currently open for registration.
    *     Valid values: online, in_house
    *
-   * @see https://api.daxko.com/v3/docs/api/index.html#listProgramOfferings
+   * @see https://api.daxko.com/api/v1/docs/api/index.html#listProgramOfferings
    */
   public function getOfferingList(string $program_id, array $offering_ids = [], array $filters = []) : array;
 
