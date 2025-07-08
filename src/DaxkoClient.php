@@ -175,7 +175,7 @@ class DaxkoClient implements DaxkoClientInterface {
       ]);
     }
 
-    return $data;
+    return (array) $data;
   }
 
 }
