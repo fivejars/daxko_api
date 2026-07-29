@@ -1,6 +1,7 @@
 {
-  "name": "fivejars/daxko_api",
-  "description": "Provides interfaces for integration with Daxko API.",
-  "type": "drupal-module",
-  "require": {}
+    "name": "fivejars/daxko_api",
+    "description": "Provides interfaces for integration with Daxko API.",
+    "version": "2.x-dev",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later"
 }
